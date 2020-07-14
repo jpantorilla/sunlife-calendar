@@ -45,6 +45,9 @@ $nav-height: 50px;
       &:nth-child(3) {
         text-align: left;
       }
+      &:focus {
+        outline: 0;
+      }
     }
 
   }

@@ -41,7 +41,6 @@ export class CalendarComponent implements OnInit {
   }
 
   ok() {
-    console.log(this.selectedDate);
     this.hideCalendar();
   }
 
@@ -52,11 +51,29 @@ export class CalendarComponent implements OnInit {
     this.selectedDate = newDate;
   }
 
+  prevMonth() {
+    this.moveDate(-1);
+  }
+
+  nextMonth() {
+    this.moveDate(1);
+  }
+
+  /*
+  */
   private hideCalendar() {
     this.show = false;
   }
 
+  private moveDate(diff: number) {
+    this.currentDate.setMonth(this.currentDate.getMonth() + diff);
+    this.createCalendar();
+  }
+
   private createCalendar() {
+    // clear the weeks array.
+    this.weeks = [];
+
     // set calendar title
     const month = this.currentDate.toLocaleDateString('default', { month: 'long' });
     this.title = `${month} ${this.currentDate.getFullYear()}`
@@ -64,13 +81,19 @@ export class CalendarComponent implements OnInit {
     // setup calendar date numbers
     let date = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), 1);
     for (let i = 7; date.getMonth() == this.currentDate.getMonth(); i += 7) {
-      this.weeks.push(this.getWeek(date));
+      const week = this.getWeek(date);
+      const selectedDate = week.find(calDate => calDate.date.getTime() == this.selectedDate?.date.getTime());
+      if (selectedDate) {
+        selectedDate.selected = true;
+      }
+      this.weeks.push(week);
       date = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), 1 + i);
-    } 
+    }
   }
 
   // returns the date numbers for the given week;
   private getWeek(date: Date): CalendarDate[] {
+    const actualDate = new Date();
     const day = date.getDay();
     const first = new Date(date.getTime() - 60*60*24* day*1000);
     const last = new Date(first.getTime() + 60 * 60 *24 * 6 * 1000);
@@ -78,15 +101,21 @@ export class CalendarComponent implements OnInit {
     const dayNum: CalendarDate[] = [];
     while (first <= last) {
       const num = first.getDate();
+      const clonedDate = new Date(first.getTime());
       const calendarDate: CalendarDate = {
         num,
-        date: new Date(first.getTime()),
-        disabled: first.getMonth() != date.getMonth(),
-        selected: num == this.currentDate.getDate()
+        date: clonedDate,
+        disabled: first.getMonth() != date.getMonth()
       }
-      if (calendarDate.selected) {
+      if (
+        num == this.currentDate.getDate()
+        && clonedDate.getMonth() == actualDate.getMonth()
+        && !this.selectedDate
+      ) {
+        calendarDate.selected = true;
         this.selectedDate = calendarDate;
       }
+
       dayNum.push(calendarDate);
       first.setDate(num + 1);
     }
