@@ -21,7 +21,11 @@
           [class.calendar__cell-selected]="day.selected"
         >{{ day.date }}</div>
       </div>
-    </div>
 
+      <div class="calendar__controls">
+        <button (click)="cancel()">Cancel</button>
+        <button>OK</button>
+      </div>
+    </div>
   </div>
 </div>

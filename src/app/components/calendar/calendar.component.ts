@@ -34,6 +34,10 @@ export class CalendarComponent implements OnInit {
     }
   }
 
+  cancel() {
+    this.show = false;
+  }
+
   private createCalendar() {
     // set calendar title
     const month = this._currentDate.toLocaleDateString('default', { month: 'long' });
@@ -59,7 +63,7 @@ export class CalendarComponent implements OnInit {
       const calendarDate: CalendarDate = {
         date: num,
         disabled: first.getMonth() != date.getMonth(),
-        selected: num == this._currentDate.getDay()
+        selected: num == this._currentDate.getDate()
       }
       dayNum.push(calendarDate);
       first.setDate(num + 1);

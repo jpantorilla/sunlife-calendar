@@ -3,6 +3,7 @@ $calendar-width: 500px;
 $calendar-width-phone: 350px;
 $color: #143845;
 $nav-color: #e1ac3b;
+$nav-height: 50px;
 
 .calendar {
   position: absolute;
@@ -23,7 +24,7 @@ $nav-color: #e1ac3b;
 
   &__nav {
     background-color: $nav-color;
-    min-height: 35px;
+    min-height: $nav-height;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -72,5 +73,20 @@ $nav-color: #e1ac3b;
     display: flex;
     justify-content: space-around;
     align-items: center;
+  }
+
+  &__controls {
+    padding: 75px 0 25px 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    button {
+      width: 150px;
+      height: 30px;
+      border: 2px solid $color;
+      color: $color;
+      border-radius: 5px;
+    }
   }
 }
