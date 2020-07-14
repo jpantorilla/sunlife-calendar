@@ -1,0 +1,27 @@
+<div class="calendar__wrapper">
+  <div class="calendar__button-wrapper" (click)="show = !show">
+    <ion-icon name="calendar-outline" class="calendar__button"></ion-icon>
+  </div>
+  <div *ngIf="show" class="calendar">
+    <div class="calendar__nav">
+      <button class="calendar__nav-button">&lt;</button>
+      <div class="calendar__nav-title">{{ title }} </div>
+      <button class="calendar__nav-button">&gt;</button>
+    </div>
+    
+    <div class="calendar__display">
+      <div class="calendar__days">
+        <div class="calendar__day-name calendar__cell" *ngFor="let name of nameOfDays">{{ name }}</div>
+      </div>
+      <div class="calendar__days" *ngFor="let week of weeks">
+        <div 
+          class="calendar__cell" 
+          *ngFor="let day of week" 
+          [class.calendar__cell-disabled]="day.disabled"
+          [class.calendar__cell-selected]="day.selected"
+        >{{ day.date }}</div>
+      </div>
+    </div>
+
+  </div>
+</div>
