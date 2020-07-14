@@ -80,8 +80,16 @@ export class CalendarComponent implements OnInit {
 
     // setup calendar date numbers
     let date = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), 1);
-    for (let i = 7; date.getMonth() == this.currentDate.getMonth(); i += 7) {
-      const week = this.getWeek(date);
+    let week: CalendarDate[] = [];
+    for (
+      let i = 7;
+      date.getMonth() == this.currentDate.getMonth() || week[0]?.date.getMonth() == this.currentDate.getMonth();
+      i += 7
+    ) {
+      week = this.getWeek(date);
+      if (week.length > 0 && week[0]?.date.getMonth() > this.currentDate.getMonth()) {
+        break;
+      }
       const selectedDate = week.find(calDate => calDate.date.getTime() == this.selectedDate?.date.getTime());
       if (selectedDate) {
         selectedDate.selected = true;
@@ -105,7 +113,7 @@ export class CalendarComponent implements OnInit {
       const calendarDate: CalendarDate = {
         num,
         date: clonedDate,
-        disabled: first.getMonth() != date.getMonth()
+        disabled: clonedDate.getMonth() != this.currentDate.getMonth()
       }
       if (
         num == this.currentDate.getDate()
