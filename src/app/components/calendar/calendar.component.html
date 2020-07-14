@@ -13,18 +13,19 @@
       <div class="calendar__days">
         <div class="calendar__day-name calendar__cell" *ngFor="let name of nameOfDays">{{ name }}</div>
       </div>
-      <div class="calendar__days" *ngFor="let week of weeks">
+      <div class="calendar__days" *ngFor="let week of weeks; let row = index;">
         <div 
           class="calendar__cell" 
-          *ngFor="let day of week" 
+          *ngFor="let day of week; let col = index;" 
           [class.calendar__cell-disabled]="day.disabled"
           [class.calendar__cell-selected]="day.selected"
-        >{{ day.date }}</div>
+          (click)="selectDate(row, col)"
+        >{{ day.num }}</div>
       </div>
 
       <div class="calendar__controls">
         <button (click)="cancel()">Cancel</button>
-        <button>OK</button>
+        <button (click)="ok()">OK</button>
       </div>
     </div>
   </div>

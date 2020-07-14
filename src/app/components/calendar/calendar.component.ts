@@ -1,7 +1,8 @@
 import { Component, OnInit, ElementRef, HostListener } from '@angular/core';
 
 export interface CalendarDate {
-  date: number;
+  date: Date;
+  num: number;
   selected?: boolean;
   disabled: boolean;
 }
@@ -13,7 +14,8 @@ export interface CalendarDate {
 })
 export class CalendarComponent implements OnInit {
   private nameOfDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-  private _currentDate: Date;
+  private currentDate: Date;
+  private selectedDate: CalendarDate;
   private weeks: Array<CalendarDate[]> = [];
   private title = "";  
 
@@ -22,7 +24,7 @@ export class CalendarComponent implements OnInit {
   constructor(private readonly elemRef: ElementRef) { }
 
   ngOnInit() {
-    this._currentDate = new Date();
+    this.currentDate = new Date();
     this.createCalendar();
   }
 
@@ -30,24 +32,40 @@ export class CalendarComponent implements OnInit {
   @HostListener('document:click', ['$event'])
   clickOutside(event:Event) {
     if (!this.elemRef.nativeElement.contains(event.target)) {
-      this.show = false
+      this.hideCalendar();
     }
   }
 
   cancel() {
+    this.hideCalendar()
+  }
+
+  ok() {
+    console.log(this.selectedDate);
+    this.hideCalendar();
+  }
+
+  selectDate(row: number, col: number) {
+    this.selectedDate.selected = false;
+    const newDate = this.weeks[row][col];
+    newDate.selected = true;
+    this.selectedDate = newDate;
+  }
+
+  private hideCalendar() {
     this.show = false;
   }
 
   private createCalendar() {
     // set calendar title
-    const month = this._currentDate.toLocaleDateString('default', { month: 'long' });
-    this.title = `${month} ${this._currentDate.getFullYear()}`
+    const month = this.currentDate.toLocaleDateString('default', { month: 'long' });
+    this.title = `${month} ${this.currentDate.getFullYear()}`
 
     // setup calendar date numbers
-    let date = new Date(this._currentDate.getFullYear(), this._currentDate.getMonth(), 1);
-    for (let i = 7; date.getMonth() == this._currentDate.getMonth(); i += 7) {
+    let date = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), 1);
+    for (let i = 7; date.getMonth() == this.currentDate.getMonth(); i += 7) {
       this.weeks.push(this.getWeek(date));
-      date = new Date(this._currentDate.getFullYear(), this._currentDate.getMonth(), 1 + i);
+      date = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), 1 + i);
     } 
   }
 
@@ -61,9 +79,13 @@ export class CalendarComponent implements OnInit {
     while (first <= last) {
       const num = first.getDate();
       const calendarDate: CalendarDate = {
-        date: num,
+        num,
+        date: new Date(first.getTime()),
         disabled: first.getMonth() != date.getMonth(),
-        selected: num == this._currentDate.getDate()
+        selected: num == this.currentDate.getDate()
+      }
+      if (calendarDate.selected) {
+        this.selectedDate = calendarDate;
       }
       dayNum.push(calendarDate);
       first.setDate(num + 1);
