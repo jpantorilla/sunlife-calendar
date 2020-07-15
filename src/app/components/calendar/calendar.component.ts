@@ -61,6 +61,15 @@ export class CalendarComponent implements OnInit {
     this.moveDate(1);
   }
 
+  toggleCalendar() {
+    this.show = !this.show;
+    if (this.show) {
+      this._selectedDate = null;
+      this.currentDate = new Date();
+      this.createCalendar();
+    }
+  }
+
   /*
   */
   private hideCalendar() {
