@@ -9,4 +9,7 @@ export class HomePage {
 
   constructor() {}
 
+  onSelectDate(date: Date) {
+    console.log(date);
+  }
 }
