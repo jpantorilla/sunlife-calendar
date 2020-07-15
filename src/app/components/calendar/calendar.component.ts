@@ -97,7 +97,7 @@ export class CalendarComponent implements OnInit {
 
   private formatDate(date: Date): string {
     // Can also use Intl.DateTimeFormat
-    switch (this.options.format) {
+    switch (this.options?.format) {
       case DateFormat.full: return date.toLocaleDateString('default', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
       case DateFormat.long: return date.toLocaleDateString('default', { month: 'long', day: 'numeric', year: 'numeric' });
       case DateFormat.medium: return date.toLocaleDateString('default', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -132,12 +132,12 @@ export class CalendarComponent implements OnInit {
       case NavDirection.previous: {
         // get last day of previous month
         const lastDay = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), 0)
-        return this.options.minDate == undefined || this.options.minDate?.getTime() < lastDay.getTime()
+        return this.options?.minDate == undefined || this.options?.minDate?.getTime() < lastDay.getTime()
       }
       case NavDirection.next: {
         // get first day of next month
         const firstDay = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 1);
-        return this.options.maxDate == undefined || this.options.maxDate?.getTime() > firstDay.getTime();
+        return this.options?.maxDate == undefined || this.options?.maxDate?.getTime() > firstDay.getTime();
       }
     }
   }
@@ -197,8 +197,8 @@ export class CalendarComponent implements OnInit {
         num,
         date: clonedDate,
         disabled: clonedDate.getMonth() != this.currentDate.getMonth() 
-                  || clonedDate.getTime() < this.options.minDate?.getTime() 
-                  || clonedDate.getTime() > this.options.maxDate?.getTime()
+                  || clonedDate.getTime() < this.options?.minDate?.getTime() 
+                  || clonedDate.getTime() > this.options?.maxDate?.getTime()
       }
       if (
         num == this.currentDate.getDate()
