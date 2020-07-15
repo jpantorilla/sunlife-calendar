@@ -4,9 +4,9 @@
   </div>
   <div *ngIf="show" class="calendar">
     <div class="calendar__nav">
-      <button class="calendar__nav-button" (click)="prevMonth()">&lt;</button>
+      <button class="calendar__nav-button" (click)="prevMonth()" [class.calendar__nav-button-hidden]="!showNav.prev">&lt;</button>
       <div class="calendar__nav-title">{{ title }} </div>
-      <button class="calendar__nav-button" (click)="nextMonth()">&gt;</button>
+      <button class="calendar__nav-button" (click)="nextMonth()" [class.calendar__nav-button-hidden]="!showNav.next">&gt;</button>
     </div>
     
     <div class="calendar__display">

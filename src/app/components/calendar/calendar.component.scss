@@ -7,6 +7,7 @@ $nav-height: 50px;
 
 .calendar {
   position: absolute;
+  cursor: pointer;
   width: $calendar-width;
   @media (max-width: 480px) {
     width: $calendar-width-phone;
@@ -39,6 +40,9 @@ $nav-height: 50px;
       color: $color;
       font-size: 20px;
 
+      &-hidden {
+        visibility: hidden;
+      }
       &:nth-child(1) {
         text-align: right;
       }

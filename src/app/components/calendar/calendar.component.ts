@@ -18,6 +18,11 @@ export interface CalendarOptions {
   format?: DateFormat
 }
 
+enum NavDirection {
+  previous = -1,
+  next = 1
+}
+
 @Component({
   selector: 'sunlife-calendar',
   templateUrl: './calendar.component.html',
@@ -28,7 +33,8 @@ export class CalendarComponent implements OnInit {
   private currentDate: Date;
   private _selectedDate: CalendarDate;
   private weeks: Array<CalendarDate[]> = [];
-  private title = "";  
+  private title = "";
+  private showNav = { prev: true, next: true  };
 
   public show = true;
   @Output() selectedDate = new EventEmitter<Date>();
@@ -68,11 +74,11 @@ export class CalendarComponent implements OnInit {
   }
 
   prevMonth() {
-    this.moveDate(-1);
+    this.moveDate(NavDirection.previous);
   }
 
   nextMonth() {
-    this.moveDate(1);
+    this.moveDate(NavDirection.next);
   }
 
   toggleCalendar() {
@@ -90,9 +96,30 @@ export class CalendarComponent implements OnInit {
     this.show = false;
   }
 
-  private moveDate(diff: number) {
-    this.currentDate.setMonth(this.currentDate.getMonth() + diff);
+  private moveDate(direction: NavDirection) {
+    this.currentDate.setMonth(this.currentDate.getMonth() + direction);
     this.createCalendar();
+  }
+
+  private toggleNavButtons() {
+    this.showNav.prev = this.checkIfNavIsPossible(NavDirection.previous);
+    this.showNav.next = this.checkIfNavIsPossible(NavDirection.next);
+  }
+
+  // checks the min and max date options if navigation should still be possible
+  private checkIfNavIsPossible(direction: NavDirection): boolean {
+    switch (direction) {
+      case NavDirection.previous: {
+        // get last day of previous month
+        const lastDay = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), 0)
+        return this.options.minDate == undefined || this.options.minDate?.getTime() < lastDay.getTime()
+      }
+      case NavDirection.next: {
+        // get first day of next month
+        const firstDay = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 1);
+        return this.options.maxDate == undefined || this.options.maxDate?.getTime() > firstDay.getTime();
+      }
+    }
   }
 
   private createCalendar() {
@@ -130,6 +157,9 @@ export class CalendarComponent implements OnInit {
       this.weeks.push(week);
       date = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), 1 + i);
     }
+
+    // toggle nav buttons
+    this.toggleNavButtons();
   }
 
   // returns the date numbers for the given week;
