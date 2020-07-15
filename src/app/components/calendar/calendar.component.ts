@@ -87,7 +87,15 @@ export class CalendarComponent implements OnInit {
       i += 7
     ) {
       week = this.getWeek(date);
-      if (week.length > 0 && week[0]?.date.getMonth() > this.currentDate.getMonth()) {
+      
+      if (
+        week.length > 0
+        && (
+          week[0]?.date.getMonth() > this.currentDate.getMonth()
+          || (week[0]?.date.getMonth() == 0 && this.currentDate.getMonth() == 11)
+        )
+        && !(week[0]?.date.getMonth() == 11 && this.currentDate.getMonth() == 0)
+      ) {
         break;
       }
       const selectedDate = week.find(calDate => calDate.date.getTime() == this.selectedDate?.date.getTime());
