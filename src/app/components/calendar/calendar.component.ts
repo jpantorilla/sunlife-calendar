@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, HostListener } from '@angular/core';
+import { Component, OnInit, ElementRef, HostListener, Output, EventEmitter } from '@angular/core';
 
 export interface CalendarDate {
   date: Date;
@@ -15,11 +15,12 @@ export interface CalendarDate {
 export class CalendarComponent implements OnInit {
   private nameOfDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
   private currentDate: Date;
-  private selectedDate: CalendarDate;
+  private _selectedDate: CalendarDate;
   private weeks: Array<CalendarDate[]> = [];
   private title = "";  
 
   public show = true;
+  @Output() selectedDate = new EventEmitter<Date>();
 
   constructor(private readonly elemRef: ElementRef) { }
 
@@ -41,14 +42,15 @@ export class CalendarComponent implements OnInit {
   }
 
   ok() {
+    this.selectedDate.emit(this._selectedDate.date);
     this.hideCalendar();
   }
 
   selectDate(row: number, col: number) {
-    this.selectedDate.selected = false;
+    this._selectedDate.selected = false;
     const newDate = this.weeks[row][col];
     newDate.selected = true;
-    this.selectedDate = newDate;
+    this._selectedDate = newDate;
   }
 
   prevMonth() {
@@ -98,9 +100,9 @@ export class CalendarComponent implements OnInit {
       ) {
         break;
       }
-      const selectedDate = week.find(calDate => calDate.date.getTime() == this.selectedDate?.date.getTime());
-      if (selectedDate) {
-        selectedDate.selected = true;
+      const _selectedDate = week.find(calDate => calDate.date.getTime() == this._selectedDate?.date.getTime());
+      if (_selectedDate) {
+        _selectedDate.selected = true;
       }
       this.weeks.push(week);
       date = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), 1 + i);
@@ -126,10 +128,10 @@ export class CalendarComponent implements OnInit {
       if (
         num == this.currentDate.getDate()
         && clonedDate.getMonth() == actualDate.getMonth()
-        && !this.selectedDate
+        && !this._selectedDate
       ) {
         calendarDate.selected = true;
-        this.selectedDate = calendarDate;
+        this._selectedDate = calendarDate;
       }
 
       dayNum.push(calendarDate);
