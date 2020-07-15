@@ -1,10 +1,21 @@
-import { Component, OnInit, ElementRef, HostListener, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ElementRef, HostListener, Output, EventEmitter, Input } from '@angular/core';
 
 export interface CalendarDate {
   date: Date;
   num: number;
   selected?: boolean;
   disabled: boolean;
+}
+
+export enum DateFormat {
+  short,
+  long
+}
+
+export interface CalendarOptions {
+  minDate?: Date;
+  maxDate?: Date;
+  format?: DateFormat
 }
 
 @Component({
@@ -21,6 +32,7 @@ export class CalendarComponent implements OnInit {
 
   public show = true;
   @Output() selectedDate = new EventEmitter<Date>();
+  @Input() options?: CalendarOptions;
 
   constructor(private readonly elemRef: ElementRef) { }
 
@@ -47,8 +59,10 @@ export class CalendarComponent implements OnInit {
   }
 
   selectDate(row: number, col: number) {
-    this._selectedDate.selected = false;
     const newDate = this.weeks[row][col];
+    if (newDate.disabled) return;
+
+    this._selectedDate.selected = false;
     newDate.selected = true;
     this._selectedDate = newDate;
   }
@@ -132,7 +146,9 @@ export class CalendarComponent implements OnInit {
       const calendarDate: CalendarDate = {
         num,
         date: clonedDate,
-        disabled: clonedDate.getMonth() != this.currentDate.getMonth()
+        disabled: clonedDate.getMonth() != this.currentDate.getMonth() 
+                  || clonedDate.getTime() < this.options.minDate?.getTime() 
+                  || clonedDate.getTime() > this.options.maxDate?.getTime()
       }
       if (
         num == this.currentDate.getDate()
