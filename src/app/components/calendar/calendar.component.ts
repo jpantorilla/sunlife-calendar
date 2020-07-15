@@ -8,8 +8,10 @@ export interface CalendarDate {
 }
 
 export enum DateFormat {
-  short,
-  long
+  short,  //  DD/MM/YYYY          | 16/07/2020     <- default
+  medium, //  MMM D, YYYY         | Jul 16, 2020
+  long,   //  MMMM D, YYYY        | July 16, 2020
+  full    //  dddd, MMMM D, YYYY  | Thursday, July 16, 2020
 }
 
 export interface CalendarOptions {
@@ -37,7 +39,7 @@ export class CalendarComponent implements OnInit {
   private showNav = { prev: true, next: true  };
 
   public show = true;
-  @Output() selectedDate = new EventEmitter<Date>();
+  @Output() selectedDate = new EventEmitter<string>();
   @Input() options?: CalendarOptions;
 
   constructor(private readonly elemRef: ElementRef) { }
@@ -60,7 +62,7 @@ export class CalendarComponent implements OnInit {
   }
 
   ok() {
-    this.selectedDate.emit(this._selectedDate.date);
+    this.selectedDate.emit(this.formatDate(this._selectedDate.date));
     this.hideCalendar();
   }
 
@@ -92,6 +94,24 @@ export class CalendarComponent implements OnInit {
 
   /*
   */
+
+  private formatDate(date: Date): string {
+    // Can also use Intl.DateTimeFormat
+    switch (this.options.format) {
+      case DateFormat.full: return date.toLocaleDateString('default', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      case DateFormat.long: return date.toLocaleDateString('default', { month: 'long', day: 'numeric', year: 'numeric' });
+      case DateFormat.medium: return date.toLocaleDateString('default', { month: 'short', day: 'numeric', year: 'numeric' });
+      case DateFormat.short:
+      default: {
+        const year = date.getFullYear();
+        const month = `${date.getMonth() + 1}`.padStart(2, '0');
+        const day = `${date.getDate()}`.padStart(2, '0');
+
+        return `${day}/${month}/${year}`;
+      }
+    }
+  }
+
   private hideCalendar() {
     this.show = false;
   }
