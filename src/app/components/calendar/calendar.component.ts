@@ -20,7 +20,7 @@ export interface CalendarOptions {
   format?: DateFormat
 }
 
-enum NavDirection {
+export enum NavDirection {
   previous = -1,
   next = 1
 }
@@ -32,13 +32,13 @@ enum NavDirection {
 })
 export class CalendarComponent implements OnInit {
   private nameOfDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-  private currentDate: Date;
   private _selectedDate: CalendarDate;
   private weeks: Array<CalendarDate[]> = [];
   private title = "";
   private showNav = { prev: true, next: true  };
 
   public show = true;
+  currentDate: Date;
   @Output() selectedDate = new EventEmitter<string>();
   @Input() options?: CalendarOptions;
 
@@ -62,7 +62,7 @@ export class CalendarComponent implements OnInit {
   }
 
   ok() {
-    this.selectedDate.emit(this.formatDate(this._selectedDate.date));
+    this.selectedDate.emit(this.formatDate(this._selectedDate.date, this.options?.format));
     this.hideCalendar();
   }
 
@@ -95,9 +95,9 @@ export class CalendarComponent implements OnInit {
   /*
   */
 
-  private formatDate(date: Date): string {
+  formatDate(date: Date, format: DateFormat = DateFormat.short): string {
     // Can also use Intl.DateTimeFormat
-    switch (this.options.format) {
+    switch (format) {
       case DateFormat.full: return date.toLocaleDateString('default', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
       case DateFormat.long: return date.toLocaleDateString('default', { month: 'long', day: 'numeric', year: 'numeric' });
       case DateFormat.medium: return date.toLocaleDateString('default', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -116,28 +116,29 @@ export class CalendarComponent implements OnInit {
     this.show = false;
   }
 
-  private moveDate(direction: NavDirection) {
+  moveDate(direction: NavDirection) {
+    console.log(this.currentDate);
     this.currentDate.setMonth(this.currentDate.getMonth() + direction);
     this.createCalendar();
   }
 
-  private toggleNavButtons() {
+  toggleNavButtons() {
     this.showNav.prev = this.checkIfNavIsPossible(NavDirection.previous);
     this.showNav.next = this.checkIfNavIsPossible(NavDirection.next);
   }
 
   // checks the min and max date options if navigation should still be possible
-  private checkIfNavIsPossible(direction: NavDirection): boolean {
+  checkIfNavIsPossible(direction: NavDirection): boolean {
     switch (direction) {
       case NavDirection.previous: {
         // get last day of previous month
         const lastDay = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), 0)
-        return this.options.minDate == undefined || this.options.minDate?.getTime() < lastDay.getTime()
+        return this.options?.minDate == undefined || this.options?.minDate?.getTime() < lastDay.getTime()
       }
       case NavDirection.next: {
         // get first day of next month
         const firstDay = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 1);
-        return this.options.maxDate == undefined || this.options.maxDate?.getTime() > firstDay.getTime();
+        return this.options?.maxDate == undefined || this.options?.maxDate?.getTime() > firstDay.getTime();
       }
     }
   }
@@ -183,7 +184,7 @@ export class CalendarComponent implements OnInit {
   }
 
   // returns the date numbers for the given week;
-  private getWeek(date: Date): CalendarDate[] {
+  getWeek(date: Date): CalendarDate[] {
     const actualDate = new Date();
     const day = date.getDay();
     const first = new Date(date.getTime() - 60*60*24* day*1000);
@@ -197,8 +198,8 @@ export class CalendarComponent implements OnInit {
         num,
         date: clonedDate,
         disabled: clonedDate.getMonth() != this.currentDate.getMonth() 
-                  || clonedDate.getTime() < this.options.minDate?.getTime() 
-                  || clonedDate.getTime() > this.options.maxDate?.getTime()
+                  || clonedDate.getTime() < this.options?.minDate?.getTime() 
+                  || clonedDate.getTime() > this.options?.maxDate?.getTime()
       }
       if (
         num == this.currentDate.getDate()
