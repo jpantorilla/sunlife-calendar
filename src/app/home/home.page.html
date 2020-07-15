@@ -1,4 +1,4 @@
 <ion-content [fullscreen]="true">
   <div>Hello World</div>
-  <sunlife-calendar (selectedDate)="onSelectDate($event)"></sunlife-calendar>
+  <sunlife-calendar [options]="calendarOptions" (selectedDate)="onSelectDate($event)"></sunlife-calendar>
 </ion-content>
