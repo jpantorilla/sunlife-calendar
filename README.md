@@ -1,6 +1,6 @@
 # sunlife-calendar
 
-Calendar component. Returns a formatted string.
+Ionic project. Calendar component. Returns a formatted string.
 
 # Calendar Options
 All properites are optional.
