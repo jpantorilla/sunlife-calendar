@@ -2,7 +2,7 @@
   <div class="calendar__button-wrapper" (click)="toggleCalendar()">
     <ion-icon name="calendar-outline" class="calendar__button"></ion-icon>
   </div>
-  <div *ngIf="show" class="calendar">
+  <div *ngIf="show" class="calendar" [@slideInOut]>
     <div class="calendar__nav">
       <button class="calendar__nav-button" (click)="prevMonth()" [class.calendar__nav-button-hidden]="!showNav.prev">&lt;</button>
       <div class="calendar__nav-title">{{ title }} </div>
