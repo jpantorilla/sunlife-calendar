@@ -8,6 +8,9 @@ $nav-height: 50px;
 .calendar {
   position: absolute;
   cursor: pointer;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   width: $calendar-width;
   @media (max-width: 480px) {
     width: $calendar-width-phone;
