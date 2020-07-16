@@ -11,7 +11,7 @@ All properites are optional.
 | maxDate       | Date        ||
 | format        | "DateFormat"| short, medium, long, full |
 
-# DateFormat
+### DateFormat
 | Enum|Format|Sample||
 |-|-|-|-|
 |short|DD/MM/YYYY|16/07/2020|default|
