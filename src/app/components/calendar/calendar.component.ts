@@ -1,4 +1,5 @@
 import { Component, OnInit, ElementRef, HostListener, Output, EventEmitter, Input } from '@angular/core';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 export interface CalendarDate {
   date: Date;
@@ -29,6 +30,19 @@ enum NavDirection {
   selector: 'sunlife-calendar',
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.scss'],
+  animations: [
+    trigger('slideInOut', [
+      transition(':enter', [
+        style({
+          transform: 'translate(-50%, -200%)'
+        }),
+        animate('300ms ease-in-out', style({ transform: 'translate(-50%, -50%)' }))
+      ]),
+      transition(':leave', [
+        animate('300ms ease-in-out', style({ transform: 'translate(-50%, -200%)' }))
+      ])
+    ])
+  ]
 })
 export class CalendarComponent implements OnInit {
   private nameOfDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
@@ -36,9 +50,9 @@ export class CalendarComponent implements OnInit {
   private _selectedDate: CalendarDate;
   private weeks: Array<CalendarDate[]> = [];
   private title = "";
-  private showNav = { prev: true, next: true  };
+  private showNav = { prev: true, next: true };
 
-  public show = true;
+  public show = false;
   @Output() selectedDate = new EventEmitter<string>();
   @Input() options?: CalendarOptions;
 
@@ -51,7 +65,7 @@ export class CalendarComponent implements OnInit {
 
   // hides the calendar when the user taps outside the component.
   @HostListener('document:click', ['$event'])
-  clickOutside(event:Event) {
+  clickOutside(event: Event) {
     if (!this.elemRef.nativeElement.contains(event.target)) {
       this.hideCalendar();
     }
@@ -97,7 +111,7 @@ export class CalendarComponent implements OnInit {
 
   private formatDate(date: Date): string {
     // Can also use Intl.DateTimeFormat
-    switch (this.options.format) {
+    switch (this.options?.format) {
       case DateFormat.full: return date.toLocaleDateString('default', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
       case DateFormat.long: return date.toLocaleDateString('default', { month: 'long', day: 'numeric', year: 'numeric' });
       case DateFormat.medium: return date.toLocaleDateString('default', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -132,12 +146,12 @@ export class CalendarComponent implements OnInit {
       case NavDirection.previous: {
         // get last day of previous month
         const lastDay = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), 0)
-        return this.options.minDate == undefined || this.options.minDate?.getTime() < lastDay.getTime()
+        return this.options?.minDate == undefined || this.options?.minDate?.getTime() < lastDay.getTime()
       }
       case NavDirection.next: {
         // get first day of next month
         const firstDay = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 1);
-        return this.options.maxDate == undefined || this.options.maxDate?.getTime() > firstDay.getTime();
+        return this.options?.maxDate == undefined || this.options?.maxDate?.getTime() > firstDay.getTime();
       }
     }
   }
@@ -186,8 +200,8 @@ export class CalendarComponent implements OnInit {
   private getWeek(date: Date): CalendarDate[] {
     const actualDate = new Date();
     const day = date.getDay();
-    const first = new Date(date.getTime() - 60*60*24* day*1000);
-    const last = new Date(first.getTime() + 60 * 60 *24 * 6 * 1000);
+    const first = new Date(date.getTime() - 60 * 60 * 24 * day * 1000);
+    const last = new Date(first.getTime() + 60 * 60 * 24 * 6 * 1000);
 
     const dayNum: CalendarDate[] = [];
     while (first <= last) {
@@ -196,9 +210,9 @@ export class CalendarComponent implements OnInit {
       const calendarDate: CalendarDate = {
         num,
         date: clonedDate,
-        disabled: clonedDate.getMonth() != this.currentDate.getMonth() 
-                  || clonedDate.getTime() < this.options.minDate?.getTime() 
-                  || clonedDate.getTime() > this.options.maxDate?.getTime()
+        disabled: clonedDate.getMonth() != this.currentDate.getMonth()
+          || clonedDate.getTime() < this.options?.minDate?.getTime()
+          || clonedDate.getTime() > this.options?.maxDate?.getTime()
       }
       if (
         num == this.currentDate.getDate()

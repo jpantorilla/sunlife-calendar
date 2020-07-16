@@ -7,16 +7,17 @@ import { CalendarOptions, DateFormat } from '../components/calendar/calendar.com
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
+  dateString: string;
 
   calendarOptions: CalendarOptions = {
-    minDate: new Date("2020-07-10"),
-    maxDate: new Date("2020-08-31"),
-    // format: DateFormat.short
+    // minDate: new Date("2020-07-10"),
+    // maxDate: new Date("2020-08-31"),
+    // format: DateFormat.full
   }
 
   constructor() {}
 
   onSelectDate(dateString: string) {
-    console.log(dateString);
+    this.dateString = dateString;
   }
 }
